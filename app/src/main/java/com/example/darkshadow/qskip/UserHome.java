@@ -17,6 +17,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+
 public class UserHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -58,8 +61,9 @@ public class UserHome extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Toast.makeText(UserHome.this, "This is my Toast message!",Toast.LENGTH_LONG).show();
-                viewOne.setVisibility(View.GONE);
-                viewTwo.setVisibility(View.VISIBLE);
+                new IntentIntegrator(UserHome.this).initiateScan();
+//                viewOne.setVisibility(View.GONE);
+//                viewTwo.setVisibility(View.VISIBLE);
             }
         });
 
@@ -83,6 +87,23 @@ public class UserHome extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+//camera *******************************************************************************************************
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                                viewOne.setVisibility(View.GONE);
+                viewTwo.setVisibility(View.VISIBLE);
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
